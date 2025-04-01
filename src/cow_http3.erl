@@ -36,6 +36,7 @@
 	qpack_max_table_capacity => 0..16#3fffffffffffffff,
 	max_field_section_size => 0..16#3fffffffffffffff,
 	qpack_blocked_streams => 0..16#3fffffffffffffff,
+	webtransport_max_sessions => 0..16#3fffffffffffffff,
 	enable_connect_protocol => boolean()
 }.
 -export_type([settings/0]).
@@ -297,6 +298,11 @@ parse_settings_id_val(Rest, Len, Settings, Identifier, Value) ->
 		_ when Identifier < 6 ->
 			{connection_error, h3_settings_error,
 				'HTTP/2 setting not defined for HTTP/3 must be rejected. (RFC9114 7.2.4.1)'};
+
+		%% WEBTRANSPORT_MAX_SESSIONS
+		3329323114 ->
+		    parse_settings_key_val(Rest, Len, Settings, webtransport_max_sessions, Value);
+
 		%% Unknown settings must be ignored.
 		_ ->
 			parse_settings_id(Rest, Len, Settings)
@@ -414,7 +420,12 @@ settings_payload(Settings) ->
 		qpack_blocked_streams -> [encode_int(1), encode_int(Value)];
 		%% SETTINGS_ENABLE_CONNECT_PROTOCOL (RFC9220).
 		enable_connect_protocol when Value -> [encode_int(8), encode_int(1)];
-		enable_connect_protocol -> [encode_int(8), encode_int(0)]
+		enable_connect_protocol -> [encode_int(8), encode_int(0)];
+
+		%% WEBTRANSPORT_MAX_SESSIONS
+		webtransport_max_sessions when Value -> [encode_int(3329323114), encode_int(Value)];
+		webtransport_max_sessions -> [encode_int(3329323114), encode_int(0)]
+
 	end || {Key, Value} <- maps:to_list(Settings)],
 	%% Include one reserved identifier in addition.
 	ReservedType = 16#1f * (rand:uniform(148764065110560900) - 1) + 16#21,

@@ -36,7 +36,8 @@
 	max_decode_blocked_streams => 0..16#3fffffffffffffff,
 	max_decode_table_size => 0..16#3fffffffffffffff,
 	max_encode_blocked_streams => 0..16#3fffffffffffffff,
-	max_encode_table_size => 0..16#3fffffffffffffff
+	max_encode_table_size => 0..16#3fffffffffffffff,
+	webtransport_max_sessions => 0..16#3fffffffffffffff
 }.
 -export_type([opts/0]).
 
