@@ -132,8 +132,10 @@ init_settings(Opts) ->
 		qpack_max_table_capacity, 0),
 	S1 = setting_from_opt(S0, Opts, max_decode_blocked_streams,
 		qpack_blocked_streams, 0),
+	S2 = setting_from_opt(S1, Opts, webtransport_max_sessions,
+		webtransport_max_sessions, 0),
 	%% @todo max_field_section_size
-	setting_from_opt(S1, Opts, enable_connect_protocol,
+	setting_from_opt(S2, Opts, enable_connect_protocol,
 		enable_connect_protocol, false).
 
 setting_from_opt(Settings, Opts, OptName, SettingName, Default) ->
